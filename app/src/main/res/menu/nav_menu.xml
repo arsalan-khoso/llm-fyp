@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/main_group">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@android:drawable/ic_menu_view"
+            android:title="New Chat"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/nav_chat_history"
+            android:icon="@android:drawable/ic_menu_recent_history"
+            android:title="Chat History"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="Settings"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="About"
+            app:showAsAction="never" />
+    </group>
+
+    <group android:id="@+id/account_group">
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:title="Logout"
+            app:showAsAction="never" />
+    </group>
+
+</menu>
+

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/uos_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <!-- Logo Section -->
+        <ImageView
+            android:id="@+id/imageViewLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="UoS Logo"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Account"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/uos_text_primary"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join UoS Sindh Bot"
+            android:textSize="14sp"
+            android:textColor="@color/uos_text_secondary"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Signup Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/uos_card_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <!-- Full Name Input -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Full Name"
+                    app:hintEnabled="true"
+                    style="@style/Widget.UoSBot.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:padding="16dp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Email Input -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Email"
+                    app:hintEnabled="true"
+                    style="@style/Widget.UoSBot.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:padding="16dp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Password Input -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Password"
+                    app:hintEnabled="true"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/uos_primary"
+                    style="@style/Widget.UoSBot.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:padding="16dp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Confirm Password Input -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:hint="Confirm Password"
+                    app:hintEnabled="true"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/uos_primary"
+                    style="@style/Widget.UoSBot.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextConfirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:padding="16dp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Sign Up Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonSignUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Create Account"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_primary"
+                    app:icon="@android:drawable/ic_menu_add"
+                    app:iconGravity="textStart"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="4dp" />
+
+                <!-- Login Link -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Already have an account? "
+                        android:textSize="14sp"
+                        android:textColor="@color/uos_text_secondary" />
+
+                    <TextView
+                        android:id="@+id/textViewLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sign In"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/uos_primary"
+                        android:padding="8dp"
+                        android:background="@drawable/text_clickable"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</ScrollView>
+

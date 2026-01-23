@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Modern Black & Cyan Color Scheme -->
+    <color name="uos_primary">#00D4FF</color> <!-- Vibrant Cyan -->
+    <color name="uos_primary_dark">#00A8CC</color> <!-- Darker Cyan -->
+    <color name="uos_primary_light">#4DE5FF</color> <!-- Light Cyan -->
+    <color name="uos_accent">#00E5FF</color> <!-- Bright Cyan Accent -->
+    <color name="uos_background">#121212</color> <!-- Dark Black Background -->
+    <color name="uos_background_light">#1E1E1E</color> <!-- Slightly Lighter Black -->
+    <color name="uos_card_background">#1E1E1E</color> <!-- Card Background -->
+    <color name="uos_text_primary">#FFFFFF</color> <!-- White Text -->
+    <color name="uos_text_secondary">#B0B0B0</color> <!-- Light Gray Text -->
+    <color name="uos_user_message">#00D4FF</color> <!-- Cyan User Message -->
+    <color name="uos_bot_message">#2A2A2A</color> <!-- Dark Gray Bot Message -->
+    <color name="uos_divider">#333333</color> <!-- Divider Color -->
+    <color name="uos_error">#FF5252</color> <!-- Error Red -->
+    <color name="uos_success">#00E676</color> <!-- Success Green -->
+</resources>
+

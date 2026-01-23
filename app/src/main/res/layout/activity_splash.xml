@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uos_background">
+
+    <!-- Animated Background -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/splash_background" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!-- Logo with Animation -->
+        <ImageView
+            android:id="@+id/imageViewLogo"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="UoS Logo"
+            android:scaleType="centerCrop" />
+
+        <!-- App Name -->
+        <TextView
+            android:id="@+id/textViewAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="University of Sindh"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05" />
+
+        <TextView
+            android:id="@+id/textViewSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Sindh Bot"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:alpha="0.9" />
+
+        <!-- Loading Indicator -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:indeterminateTint="@color/white"
+            android:indeterminateTintMode="src_atop" />
+
+        <TextView
+            android:id="@+id/textViewLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Loading..."
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:alpha="0.8" />
+
+    </LinearLayout>
+
+    <!-- Version Info -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="Version 1.0.0"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:alpha="0.6" />
+
+</RelativeLayout>
