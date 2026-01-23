@@ -19,6 +19,10 @@ public class ApiClient {
             
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(logging)
+                    .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)  // Allow time for Render cold start
+                    .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                    .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
                     .build();
             
             retrofit = new Retrofit.Builder()
