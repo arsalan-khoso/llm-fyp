@@ -7,8 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     // Change this to your backend API URL
-    private static final String BASE_URL = "http://10.0.2.2:8000/"; // For Android Emulator
-    // For real device, use your computer's IP: "http://192.168.1.XXX:8000/"
+    // Change this to your backend API URL
+    private static final String BASE_URL = "https://llm-fyp.onrender.com/"; // Production URL
     
     private static Retrofit retrofit = null;
     
