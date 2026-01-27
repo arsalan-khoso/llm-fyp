@@ -1,0 +1,19 @@
+name: Keep Render Backend Alive
+
+on:
+  schedule:
+    # Run every 14 minutes to prevent 15-minute inactivity sleep
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allows manual triggering from GitHub UI
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend
+        run: |
+          # The -I flag fetches headers only (lighter request)
+          # We use the URL found in PREVENT_SLEEP.md
+          curl -I -X GET https://llm-fyp.onrender.com/
+          
+          echo "Ping sent to https://llm-fyp.onrender.com/ to prevent sleeping."
