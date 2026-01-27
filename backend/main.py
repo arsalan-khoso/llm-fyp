@@ -67,6 +67,24 @@ if OPENAI_API_KEY:
 # just noting that the user needs to ensure requirements.txt is up to date 
 # and Procfile is created.
 
+# Load FAQs from JSON file
+def load_faqs_knowledge_base():
+    try:
+        faq_path = Path(__file__).parent / 'faqs.json'
+        if faq_path.exists():
+            with open(faq_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data.get('faqs', [])
+    except Exception as e:
+        print(f"Error loading FAQs: {e}")
+    return []
+
+# Formatted FAQ text
+faqs_list = load_faqs_knowledge_base()
+formatted_faqs = "\n\nFREQUENTLY ASKED QUESTIONS AND ANSWERS:\nThis section contains specific questions and their official answers. Use these EXACT answers if the user asks a matching question.\n"
+for item in faqs_list:
+    formatted_faqs += f"\nQ: {item.get('question')}\nA: {item.get('answer')}\n"
+
 UOS_KNOWLEDGE_BASE = """
 University of Sindh (UoS) - Comprehensive Information:
 
@@ -143,7 +161,7 @@ IMPORTANT NOTES:
 - For most accurate and up-to-date information, always check the official website
 - Admission process and requirements may vary by program
 - Scholarships and financial aid may be available for deserving students
-"""
+""" + formatted_faqs
 
 # Authentication Models
 class LoginRequest(BaseModel):
