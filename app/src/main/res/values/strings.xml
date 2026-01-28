@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UoS Sindh Bot</string>
+    <string name="app_name">UoS Bot</string>
     <string name="welcome_message">Welcome to UoS Sindh Bot! How can I help you today?</string>
     <string name="hint_enter_message">Type your message here...</string>
     <string name="send">Send</string>

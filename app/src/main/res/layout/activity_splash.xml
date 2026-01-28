@@ -23,7 +23,7 @@
             android:id="@+id/imageViewLogo"
             android:layout_width="140dp"
             android:layout_height="140dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/logo"
             android:contentDescription="UoS Logo"
             android:scaleType="centerCrop" />
 

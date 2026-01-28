@@ -48,6 +48,18 @@
                         android:layout_width="0dp"
                         android:layout_height="1dp"
                         android:layout_weight="1" />
+                        
+                    <!-- New Chat Button -->
+                    <ImageButton
+                        android:id="@+id/buttonNewChat"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@android:drawable/ic_menu_add"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="New Chat"
+                        android:tint="@color/uos_primary"
+                        android:padding="8dp"
+                        android:layout_marginEnd="12dp" />
 
                     <!-- User Profile Circle -->
                     <TextView

@@ -42,7 +42,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
+import java.util.UUID;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     
     private RecyclerView recyclerViewChat;
     private EditText editTextMessage;
@@ -59,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewHistory;
     private ChatHistoryAdapter historyAdapter;
     private TextView textViewNoHistory;
+    private TextToSpeech textToSpeech;
+    private String currentSessionId;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
             initializeViews();
             setupRecyclerView();
             setupSendButton();
+            setupNewChatButton();
+            
+            // Initialize TextToSpeech
+            textToSpeech = new TextToSpeech(this, this);
             
             // Defer non-critical setup to avoid blocking
             recyclerViewChat.post(new Runnable() {
@@ -92,6 +103,9 @@ public class MainActivity extends AppCompatActivity {
                     if (chatHistoryManager == null) {
                         chatHistoryManager = new ChatHistoryManager(MainActivity.this);
                     }
+                    // Load current session ID
+                    currentSessionId = chatHistoryManager.getCurrentSessionId();
+                    
                     List<Message> savedMessages = chatHistoryManager.loadCurrentChat();
                     List<ChatHistoryManager.ChatSession> history = chatHistoryManager.getChatHistory();
                     
@@ -117,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (chatAdapter != null) {
                                     chatAdapter.notifyDataSetChanged();
                                 }
+                                initializeAdapterListener();
                                 recyclerViewChat.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -261,7 +276,14 @@ public class MainActivity extends AppCompatActivity {
                     if (session.messages != null && !session.messages.isEmpty()) {
                         messages.clear();
                         messages.addAll(session.messages);
+                        messages.addAll(session.messages);
                         chatAdapter.notifyDataSetChanged();
+                        
+                        // Set current session ID
+                        currentSessionId = session.id;
+                        chatHistoryManager.saveCurrentSessionId(currentSessionId);
+                        saveChat(); // Save as current chat so it persists on restart
+                        
                         scrollToBottom();
                         if (drawerLayout != null) {
                             drawerLayout.closeDrawer(GravityCompat.START);
@@ -325,7 +347,16 @@ public class MainActivity extends AppCompatActivity {
                     if (!userMessages.isEmpty() && messages.size() > 1) {
                         String firstPrompt = userMessages.get(0).getText();
                         String title = firstPrompt.length() > 40 ? firstPrompt.substring(0, 40) + "..." : firstPrompt;
-                        chatHistoryManager.saveToHistory(messages, title);
+                        String firstPrompt = userMessages.get(0).getText();
+                        String title = firstPrompt.length() > 40 ? firstPrompt.substring(0, 40) + "..." : firstPrompt;
+                        
+                        // Generate ID if needed
+                        if (currentSessionId == null) {
+                            currentSessionId = UUID.randomUUID().toString();
+                            chatHistoryManager.saveCurrentSessionId(currentSessionId);
+                        }
+                        
+                        chatHistoryManager.saveToHistory(messages, title, currentSessionId);
                         
                         // Refresh history list on UI thread
                         runOnUiThread(new Runnable() {
@@ -413,6 +444,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
+    private void setupNewChatButton() {
+        try {
+            ImageButton buttonNewChat = findViewById(R.id.buttonNewChat);
+            if (buttonNewChat != null) {
+                buttonNewChat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AnimationUtils.bounce(v);
+                        startNewChat();
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void startNewChat() {
+        messages.clear();
+        chatAdapter.notifyDataSetChanged();
+        
+        // Reset session
+        currentSessionId = null;
+        chatHistoryManager.clearCurrentChat();
+        
+        addWelcomeMessage();
+        
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+
     private void setupSendButton() {
         try {
             if (buttonSend != null) {
@@ -433,6 +496,35 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void initializeAdapterListener() {
+        if (chatAdapter != null) {
+            chatAdapter.setOnMessageClickListener(new ChatAdapter.OnMessageClickListener() {
+                @Override
+                public void onSpeakClick(String text) {
+                    speak(text);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            int result = textToSpeech.setLanguage(Locale.US);
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Toast.makeText(this, "TTS Language not supported", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "TTS Initialization failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void speak(String text) {
+        if (textToSpeech != null) {
+            textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
         }
     }
     
@@ -653,14 +745,29 @@ public class MainActivity extends AppCompatActivity {
         String[] settings = {
             "Notifications: Enabled",
             "Language: Auto-detect",
-            "Theme: Dark",
-            "Chat History: Enabled",
-            "Auto-save: Enabled"
+            "Clear Chat History"
         };
         
-        builder.setItems(settings, null);
+        builder.setItems(settings, (dialog, which) -> {
+            if (which == 2) { // Clear History
+                showClearHistoryDialog();
+            }
+        });
         builder.setPositiveButton("Close", null);
         builder.setIcon(android.R.drawable.ic_menu_preferences);
+        builder.show();
+    }
+    
+    private void showClearHistoryDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Clear History");
+        builder.setMessage("Are you sure you want to delete all chat history?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            chatHistoryManager.clearAllHistory();
+            refreshHistoryList();
+            Toast.makeText(this, "History cleared", Toast.LENGTH_SHORT).show();
+        });
+        builder.setNegativeButton("No", null);
         builder.show();
     }
     
@@ -747,12 +854,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+        }
         // Save chat when app goes to background
         saveChat();
     }
     
     @Override
     protected void onDestroy() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
         super.onDestroy();
         // Save chat before destroying
         saveChat();

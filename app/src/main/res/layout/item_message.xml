@@ -55,6 +55,18 @@
                 android:tint="@color/uos_primary"
                 android:padding="4dp"
                 android:visibility="gone" />
+                
+            <ImageButton
+                android:id="@+id/buttonSpeak"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@android:drawable/ic_lock_silent_mode_off"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Speak"
+                android:tint="@color/uos_primary"
+                android:padding="4dp"
+                android:visibility="gone"
+                android:layout_marginStart="8dp"/>
 
         </LinearLayout>
 

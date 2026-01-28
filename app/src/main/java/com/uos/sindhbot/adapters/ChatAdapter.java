@@ -73,6 +73,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
                     }
                 });
             }
+            if (holder.buttonSpeak != null) {
+                holder.buttonSpeak.setVisibility(View.VISIBLE);
+                holder.buttonSpeak.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (listener != null) {
+                            listener.onSpeakClick(message.getText());
+                        }
+                    }
+                });
+            }
             rootLayout.setGravity(Gravity.START);
             if (messageParams != null) {
                 messageParams.gravity = Gravity.START;
@@ -80,9 +91,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             rootLayout.setPadding(16, 8, 60, 8);
         }
         
-        // Hide copy button for user messages
-        if (message.isUser() && holder.buttonCopy != null) {
-            holder.buttonCopy.setVisibility(View.GONE);
+        // Hide buttons for user messages
+        if (message.isUser()) {
+            if (holder.buttonCopy != null) holder.buttonCopy.setVisibility(View.GONE);
+            if (holder.buttonSpeak != null) holder.buttonSpeak.setVisibility(View.GONE);
         }
         
         if (messageParams != null) {
@@ -117,11 +129,23 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show();
     }
     
+    // Listener interface
+    public interface OnMessageClickListener {
+        void onSpeakClick(String text);
+    }
+    
+    private OnMessageClickListener listener;
+    
+    public void setOnMessageClickListener(OnMessageClickListener listener) {
+        this.listener = listener;
+    }
+    
     static class MessageViewHolder extends RecyclerView.ViewHolder {
         LinearLayout layoutMessage;
         TextView textViewMessage;
         TextView textViewTime;
         ImageButton buttonCopy;
+        ImageButton buttonSpeak;
         
         MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -129,6 +153,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             textViewMessage = itemView.findViewById(R.id.textViewMessage);
             textViewTime = itemView.findViewById(R.id.textViewTime);
             buttonCopy = itemView.findViewById(R.id.buttonCopy);
+            buttonSpeak = itemView.findViewById(R.id.buttonSpeak);
         }
     }
 }
