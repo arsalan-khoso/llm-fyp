@@ -391,7 +391,7 @@ def get_uos_answer(question: str, user_language: str) -> dict:
         
         return {
             "answer": answer,
-            "source": "University of Sindh Official FAQ",
+            "source": None,
             "language": user_language,
             "success": True
         }
