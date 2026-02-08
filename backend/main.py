@@ -79,11 +79,99 @@ def load_faqs_knowledge_base():
         print(f"Error loading FAQs: {e}")
     return []
 
+#Load comprehensive university data
+def load_university_data():
+    try:
+        data_path = Path(__file__).parent / 'university_data.json'
+        if data_path.exists():
+            with open(data_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"Error loading university data: {e}")
+    return {}
+
 # Formatted FAQ text
 faqs_list = load_faqs_knowledge_base()
+university_data = load_university_data()
+
 formatted_faqs = "\n\nFREQUENTLY ASKED QUESTIONS AND ANSWERS:\nThis section contains specific questions and their official answers. Use these EXACT answers if the user asks a matching question.\n"
 for item in faqs_list:
     formatted_faqs += f"\nQ: {item.get('question')}\nA: {item.get('answer')}\n"
+
+# Format university data for knowledge base
+formatted_university_data = "\n\n=== COMPREHENSIVE UNIVERSITY DATA ===\n"
+
+# Convocation Data
+if 'convocation' in university_data:
+    conv = university_data['convocation']
+    formatted_university_data += f"\n\nCONVOCATION 2024-2025:\n"
+    formatted_university_data += f"Eligibility: {', '.join(conv.get('eligibility', []))}\n"
+    formatted_university_data += f"Requirements: {', '.join(conv.get('requirements', []))}\n"
+    formatted_university_data += f"\nConvocation Fees:\n"
+    for fee in conv.get('fees', []):
+        formatted_university_data += f"- {fee['discipline']}: Degree Fee Rs.{fee['degree_fee']}, Convocation Fee Rs.{fee['convocation_fee']}, Total Rs.{fee['total_fee']}\n"
+
+# Transport Data
+if 'transport' in university_data:
+    trans = university_data['transport']
+    formatted_university_data += f"\n\nUNIVERSITY TRANSPORT:\n"
+    formatted_university_data += f"Contact: {trans.get('contact')}\n"
+    formatted_university_data += f"\nAvailable Vehicles:\n"
+    for vehicle in trans.get('vehicles', []):
+        if 'Available' in vehicle.get('condition', ''):
+            formatted_university_data += f"- {vehicle['vehicle_name']} ({vehicle['number']}), Model: {vehicle['model']}, {vehicle['condition']}\n"
+    formatted_university_data += f"\nAvailable Buses:\n"
+    for bus in trans.get('buses', []):
+        if 'On Road' in bus.get('condition', ''):
+            formatted_university_data += f"- {bus['company']} Bus ({bus['bus_no']}), Model: {bus['model']}, {bus['condition']}\n"
+
+# District Quota Seats
+if 'district_quota_seats' in university_data:
+    seats = university_data['district_quota_seats']
+    formatted_university_data += f"\n\nDISTRICT QUOTA SEATS ({seats.get('program_type')}):\n"
+    for district in seats.get('districts', []):
+        formatted_university_data += f"\n{district['name']} District:\n"
+        for program, count in district['seats'].items():
+            program_name = program.replace('_', ' ')
+            formatted_university_data += f"  - {program_name}: {count} seats\n"
+
+# Grading Policy
+if 'grading_policy' in university_data:
+    grading = university_data['grading_policy']
+    formatted_university_data += f"\n\nGRADING SYSTEM ({grading.get('type')}):\n"
+    for grade in grading.get('grades', []):
+        formatted_university_data += f"Grade {grade['grade']}: {grade['percentage_range']}, GPA {grade['grade_point']} ({grade['description']})\n"
+
+# Degree Programs
+if 'degree_programs' in university_data:
+    programs = university_data['degree_programs']
+    formatted_university_data += f"\n\nDEGREE PROGRAMS:\n"
+    formatted_university_data += f"Undergraduate Programs: {', '.join(programs.get('undergraduate', []))}\n"
+    formatted_university_data += f"Postgraduate Programs: {', '.join(programs.get('postgraduate', []))}\n"
+
+# Program Eligibility
+if 'program_eligibility' in university_data:
+    eligibility = university_data['program_eligibility']
+    formatted_university_data += f"\n\nPROGRAM ELIGIBILITY:\n"
+    
+    if '4_year_programs' in eligibility:
+        formatted_university_data += "\n4-Year Programs:\n"
+        for category, details in eligibility['4_year_programs'].items():
+            formatted_university_data += f"  {category.replace('_', ' ').title()}: {', '.join(details['programs'])}\n"
+            formatted_university_data += f"  Eligibility: {', '.join(details['eligibility'])}\n"
+    
+    if '5_year_programs' in eligibility:
+        formatted_university_data += "\n5-Year Programs:\n"
+        for program, details in eligibility['5_year_programs'].items():
+            formatted_university_data += f"  {program.upper()}: Eligibility - {', '.join(details['eligibility'])}\n"
+
+# Fee Structure
+if 'fee_structure' in university_data:
+    fees = university_data['fee_structure']
+    formatted_university_data += f"\n\nFEE STRUCTURE:\n"
+    formatted_university_data += f"Undergraduate: {fees.get('undergraduate')}\n"
+    formatted_university_data += f"Graduate: {fees.get('graduate')}\n"
+    formatted_university_data += f"M.Phil/PhD: {fees.get('mphil_phd')}\n"
 
 UOS_KNOWLEDGE_BASE = """
 University of Sindh (UoS) - Comprehensive Information:
@@ -161,7 +249,7 @@ IMPORTANT NOTES:
 - For most accurate and up-to-date information, always check the official website
 - Admission process and requirements may vary by program
 - Scholarships and financial aid may be available for deserving students
-""" + formatted_faqs
+""" + formatted_university_data + formatted_faqs
 
 # Authentication Models
 class LoginRequest(BaseModel):

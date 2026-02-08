@@ -1,0 +1,424 @@
+{
+    "university_info": {
+        "name": "University of Sindh",
+        "campus": "Allama I. I. Kazi Campus, Jamshoro",
+        "country": "Pakistan"
+    },
+    "convocation": {
+        "title": "Convocation Details 2024-2025",
+        "eligibility": [
+            "Regular university students who passed final examinations and graduated in 2024",
+            "Affiliated college students who graduated in 2024",
+            "Students who have already received their degree can participate by paying only convocation fee"
+        ],
+        "requirements": [
+            "Passed final examinations",
+            "Graduation year must be 2024",
+            "Paid degree fee (if degree not issued)",
+            "Paid convocation event fee",
+            "Original paid challan",
+            "CNIC or B-Form"
+        ],
+        "fees": [
+            {
+                "discipline": "BS / BBA / BA / BSc / AD / MA / MSc / B.Ed / MBA / Pharm.D / LLB / LLM",
+                "degree_fee": 5900,
+                "convocation_fee": 4900,
+                "total_fee": 10800
+            },
+            {
+                "discipline": "Public & Private Affiliated Colleges (Semester System)",
+                "degree_fee": 8750,
+                "convocation_fee": 4900,
+                "total_fee": 13650
+            },
+            {
+                "discipline": "B.Ed & M.Ed (Off Campus)",
+                "degree_fee": 6850,
+                "convocation_fee": 4900,
+                "total_fee": 11750
+            },
+            {
+                "discipline": "M.Phil",
+                "degree_fee": 13700,
+                "convocation_fee": 4900,
+                "total_fee": 18600
+            },
+            {
+                "discipline": "Ph.D",
+                "degree_fee": 19500,
+                "convocation_fee": 4900,
+                "total_fee": 24400
+            },
+            {
+                "discipline": "Degree Already Issued (Only Event Fee)",
+                "degree_fee": 0,
+                "convocation_fee": 4900,
+                "total_fee": 4900
+            }
+        ]
+    },
+    "transport": {
+        "title": "Official List of Vehicles & Buses",
+        "contact": "021-9213273",
+        "vehicles": [
+            {
+                "id": 1,
+                "vehicle_name": "Shahzore",
+                "number": "GL-5051",
+                "model": 2004,
+                "custody": "Campus Security",
+                "condition": "Available"
+            },
+            {
+                "id": 2,
+                "vehicle_name": "Shahzore",
+                "number": "GL-5050",
+                "model": 2004,
+                "custody": "Transport Section",
+                "condition": "Out of Order since 2019"
+            },
+            {
+                "id": 7,
+                "vehicle_name": "Suzuki Bolan",
+                "number": "GL-4002",
+                "model": 1990,
+                "custody": "Workshop",
+                "condition": "Out of Order since 2015"
+            },
+            {
+                "id": 18,
+                "vehicle_name": "Suzuki Cultus",
+                "number": "GL-0146",
+                "model": 2007,
+                "custody": "Transport Section",
+                "condition": "Out of Order since 2018"
+            },
+            {
+                "id": 32,
+                "vehicle_name": "Suzuki Mehran",
+                "number": "GSA-843",
+                "model": 2012,
+                "custody": "VC Secretariat",
+                "condition": "Available"
+            },
+            {
+                "id": 48,
+                "vehicle_name": "Toyota Hiace",
+                "number": "GL-4033",
+                "model": 1995,
+                "custody": "Workshop",
+                "condition": "Out of Order since 2013-14"
+            },
+            {
+                "id": 68,
+                "vehicle_name": "Hiace Commute Van (Ambulance)",
+                "number": "EA-2259",
+                "model": "New",
+                "custody": "Mini Hospital SU Jamshoro",
+                "condition": "Registered & Available"
+            }
+        ],
+        "buses": [
+            {
+                "id": 1,
+                "company": "Bedford",
+                "bus_no": "EB-0002",
+                "model": 1990,
+                "condition": "On Road"
+            },
+            {
+                "id": 4,
+                "company": "Hino Old",
+                "bus_no": "EB-0052",
+                "model": 1988,
+                "condition": "Out of Order since 2013"
+            },
+            {
+                "id": 9,
+                "company": "Chinese Bus",
+                "bus_no": "JA-6811",
+                "model": 1994,
+                "condition": "Out of Order since 2018"
+            },
+            {
+                "id": 13,
+                "company": "Hino",
+                "bus_no": "EB-0069",
+                "model": 2005,
+                "condition": "On Road"
+            },
+            {
+                "id": 50,
+                "company": "Hino",
+                "bus_no": "EB-0232",
+                "model": 2020,
+                "condition": "On Road"
+            }
+        ]
+    },
+    "district_quota_seats": {
+        "program_type": "District Quota Oriented Bachelor Degree Programmes",
+        "districts": [
+            {
+                "name": "Hyderabad",
+                "seats": {
+                    "BE_EE": 3,
+                    "BE_TE": 3,
+                    "PHARM_D": 4,
+                    "BS_DS": 4,
+                    "BS_IT": 10,
+                    "BS_SWE": 10,
+                    "BS_CS": 10,
+                    "BS_AI": 4,
+                    "LLB_HONS": 8,
+                    "BBA_HONS": 24,
+                    "BEMS": 4,
+                    "DPT": 4
+                }
+            },
+            {
+                "name": "Tando Allahyar",
+                "seats": {
+                    "BE_EE": 2,
+                    "BE_TE": 2,
+                    "PHARM_D": 2,
+                    "BS_DS": 2,
+                    "BS_IT": 4,
+                    "BS_SWE": 4,
+                    "BS_CS": 4,
+                    "BS_AI": 2,
+                    "LLB_HONS": 4,
+                    "BBA_HONS": 10,
+                    "BEMS": 2,
+                    "DPT": 2
+                }
+            },
+            {
+                "name": "Tando Muhammad Khan",
+                "seats": {
+                    "BE_EE": 2,
+                    "BE_TE": 2,
+                    "PHARM_D": 3,
+                    "BS_DS": 3,
+                    "BS_IT": 6,
+                    "BS_SWE": 6,
+                    "BS_CS": 6,
+                    "BS_AI": 3,
+                    "LLB_HONS": 6,
+                    "BBA_HONS": 12,
+                    "BEMS": 3,
+                    "DPT": 3
+                }
+            },
+            {
+                "name": "Badin",
+                "seats": {
+                    "BE_EE": 2,
+                    "BE_TE": 2,
+                    "PHARM_D": 2,
+                    "BS_DS": 2,
+                    "BS_IT": 4,
+                    "BS_SWE": 4,
+                    "BS_CS": 4,
+                    "BS_AI": 2,
+                    "LLB_HONS": 4,
+                    "BBA_HONS": 8,
+                    "BEMS": 2,
+                    "DPT": 2
+                }
+            },
+            {
+                "name": "Jamshoro",
+                "seats": {
+                    "BE_EE": 2,
+                    "BE_TE": 2,
+                    "PHARM_D": 4,
+                    "BS_DS": 4,
+                    "BS_IT": 6,
+                    "BS_SWE": 6,
+                    "BS_CS": 6,
+                    "BS_AI": 4,
+                    "LLB_HONS": 8,
+                    "BBA_HONS": 16,
+                    "BEMS": 4,
+                    "DPT": 4
+                }
+            }
+        ]
+    },
+    "grading_policy": {
+        "type": "Absolute Semester Grading",
+        "grades": [
+            {
+                "grade": "A",
+                "grade_point": 4.0,
+                "percentage_range": "85-100%",
+                "description": "Very Good"
+            },
+            {
+                "grade": "A",
+                "grade_point": 3.6,
+                "percentage_range": "80-84%",
+                "description": "Very Good"
+            },
+            {
+                "grade": "B",
+                "grade_point": 3.2,
+                "percentage_range": "75-79%",
+                "description": "Good"
+            },
+            {
+                "grade": "B",
+                "grade_point": 2.8,
+                "percentage_range": "70-74%",
+                "description": "Good"
+            },
+            {
+                "grade": "C",
+                "grade_point": 2.4,
+                "percentage_range": "65-69%",
+                "description": "Satisfactory"
+            },
+            {
+                "grade": "C",
+                "grade_point": 2.0,
+                "percentage_range": "60-64%",
+                "description": "Average"
+            },
+            {
+                "grade": "D",
+                "grade_point": 1.5,
+                "percentage_range": "55-59%",
+                "description": "Conditional Pass"
+            },
+            {
+                "grade": "D",
+                "grade_point": 1.0,
+                "percentage_range": "50-54%",
+                "description": "Pass"
+            },
+            {
+                "grade": "F",
+                "grade_point": 0.0,
+                "percentage_range": "Below 50%",
+                "description": "Fail"
+            }
+        ]
+    },
+    "degree_programs": {
+        "undergraduate": [
+            "BS Accounting and Finance",
+            "BS Banking and Finance",
+            "BS Commerce",
+            "BS Forensic Accounting and Fraud Examination",
+            "BS Data Science",
+            "BS Information Technology",
+            "BS Software Engineering",
+            "BS Computer Science",
+            "BS Artificial Intelligence",
+            "BS Biochemistry",
+            "BS Biotechnology",
+            "BS Botany",
+            "BS Chemistry",
+            "BS Environmental Science",
+            "BS Freshwater Biology and Fisheries",
+            "BS Genetics",
+            "BS Geography",
+            "BS Geology",
+            "BS Mathematics",
+            "BS Microbiology",
+            "BS Nutrition & Food Science",
+            "BS Physics",
+            "BS Physiology",
+            "BS Physical Education Health & Sports",
+            "BS Public Health",
+            "BS Statistics",
+            "BS Zoology",
+            "BS Islamic Studies",
+            "BS Criminology",
+            "BS Development Communication",
+            "BS Economics",
+            "BBA (Honours)",
+            "Pharm-D (Doctor of Pharmacy)",
+            "LLB (Honours)"
+        ],
+        "postgraduate": [
+            "MA / M.Sc (Various Departments)",
+            "MBA",
+            "MS / M.Phil (Various Disciplines)",
+            "Ph.D (Various Disciplines)"
+        ]
+    },
+    "program_eligibility": {
+        "4_year_programs": {
+            "computing": {
+                "programs": [
+                    "BS Computer Science",
+                    "BS Software Engineering",
+                    "BS IT",
+                    "BS AI",
+                    "BS Data Science"
+                ],
+                "eligibility": [
+                    "Pre-Engineering",
+                    "Pre-Medical (Math deficiency)",
+                    "ICS"
+                ]
+            },
+            "natural_sciences": {
+                "programs": [
+                    "BS Physics",
+                    "BS Chemistry",
+                    "BS Mathematics",
+                    "BS Zoology",
+                    "BS Botany"
+                ],
+                "eligibility": [
+                    "Pre-Engineering",
+                    "Pre-Medical"
+                ]
+            },
+            "business": {
+                "programs": [
+                    "BBA",
+                    "BS Commerce",
+                    "BS Accounting & Finance"
+                ],
+                "eligibility": [
+                    "Pre-Engineering",
+                    "Pre-Medical",
+                    "Commerce",
+                    "Arts"
+                ]
+            }
+        },
+        "5_year_programs": {
+            "pharm_d": {
+                "eligibility": [
+                    "Pre-Medical only"
+                ]
+            },
+            "dpt": {
+                "eligibility": [
+                    "Pre-Medical only"
+                ]
+            },
+            "bems": {
+                "eligibility": [
+                    "Pre-Medical only"
+                ]
+            },
+            "llb": {
+                "eligibility": [
+                    "All groups (LAT required)"
+                ]
+            }
+        }
+    },
+    "fee_structure": {
+        "undergraduate": "Approx Rs. 80,000 per BS program (varies by discipline)",
+        "graduate": "Fees depend on program and are printed on the admission challan (includes tuition, admission & other fees)",
+        "mphil_phd": "Includes semester tuition + admission fee + department charges (exact shown during online form submission)"
+    }
+}
