@@ -343,20 +343,22 @@ def find_matching_faq(question: str) -> Optional[dict]:
     """Find matching FAQ using simple similarity check"""
     question_lower = question.lower().strip()
     
-    # Direct match check
     for faq in faqs_list:
         faq_question = faq.get('question', '').lower().strip()
         
-        # Check for exact or very similar match
-        if faq_question in question_lower or question_lower in faq_question:
+        # Direct match check (Exact match or very close)
+        if question_lower == faq_question or (len(question_lower) > 10 and question_lower in faq_question):
             return faq
-        
+            
         # Check for keyword overlap
-        question_words = set(question_lower.split())
-        faq_words = set(faq_question.split())
+        question_filter = question_lower.replace('?', '').replace('.', '')
+        faq_filter = faq_question.replace('?', '').replace('.', '')
+        
+        question_words = set(question_filter.split())
+        faq_words = set(faq_filter.split())
         
         # Remove common words
-        common_words = {'what', 'is', 'the', 'are', 'how', 'can', 'do', 'does', 'when', 'where', 'who', 'at', 'in', 'for', 'a', 'an', 'to', 'of', 'and', 'or'}
+        common_words = {'what', 'is', 'the', 'are', 'how', 'can', 'do', 'does', 'when', 'where', 'who', 'at', 'in', 'for', 'a', 'an', 'to', 'of', 'and', 'or', 'hi', 'hello', 'hey'}
         question_words -= common_words
         faq_words -= common_words
         
@@ -364,7 +366,11 @@ def find_matching_faq(question: str) -> Optional[dict]:
         if len(question_words) > 0 and len(faq_words) > 0:
             overlap = len(question_words & faq_words)
             similarity = overlap / min(len(question_words), len(faq_words))
-            if similarity > 0.6:
+            
+            # Require higher similarity for short queries
+            threshold = 0.8 if len(question_words) < 2 else 0.6
+            
+            if similarity > threshold:
                 return faq
     
     return None
