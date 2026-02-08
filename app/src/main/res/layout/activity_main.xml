@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/uos_background_light"
-                app:title="UoS Sindh Bot"
+                app:title="UoS AI Assist"
                 app:titleTextColor="@color/uos_primary">
 
                 <LinearLayout
@@ -49,7 +49,6 @@
                         android:layout_height="1dp"
                         android:layout_weight="1" />
                         
-                    <!-- New Chat Button -->
                     <ImageButton
                         android:id="@+id/buttonNewChat"
                         android:layout_width="40dp"
@@ -57,6 +56,18 @@
                         android:src="@android:drawable/ic_menu_add"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="New Chat"
+                        android:tint="@color/uos_primary"
+                        android:padding="8dp"
+                        android:layout_marginEnd="12dp" />
+
+                    <!-- Settings Icon -->
+                    <ImageButton
+                        android:id="@+id/buttonSettings"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@android:drawable/ic_menu_manage"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Settings"
                         android:tint="@color/uos_primary"
                         android:padding="8dp"
                         android:layout_marginEnd="12dp" />

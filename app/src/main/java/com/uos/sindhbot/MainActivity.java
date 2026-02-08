@@ -46,6 +46,8 @@ import android.speech.tts.TextToSpeech;
 import java.util.Locale;
 import java.util.UUID;
 import android.widget.Button;
+import android.widget.PopupMenu;
+import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     
@@ -66,9 +68,14 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private TextView textViewNoHistory;
     private TextToSpeech textToSpeech;
     private String currentSessionId;
+    private ImageButton buttonSettings;
+    private boolean isDarkTheme = true; // Default to dark theme
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Load and apply theme BEFORE super.onCreate
+        loadTheme();
+        
         super.onCreate(savedInstanceState);
         try {
             setContentView(R.layout.activity_main);
@@ -78,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             setupRecyclerView();
             setupSendButton();
             setupNewChatButton();
+            setupSettingsButton();
             
             // Initialize TextToSpeech
             textToSpeech = new TextToSpeech(this, this);
@@ -164,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             recyclerViewChat = findViewById(R.id.recyclerViewChat);
             editTextMessage = findViewById(R.id.editTextMessage);
             buttonSend = findViewById(R.id.buttonSend);
+            buttonSettings = findViewById(R.id.buttonSettings);
             recyclerViewHistory = findViewById(R.id.recyclerViewHistory);
             textViewNoHistory = findViewById(R.id.textViewNoHistory);
             chatHistoryManager = new ChatHistoryManager(this);
@@ -347,8 +356,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     if (!userMessages.isEmpty() && messages.size() > 1) {
                         String firstPrompt = userMessages.get(0).getText();
                         String title = firstPrompt.length() > 40 ? firstPrompt.substring(0, 40) + "..." : firstPrompt;
-                        String firstPrompt = userMessages.get(0).getText();
-                        String title = firstPrompt.length() > 40 ? firstPrompt.substring(0, 40) + "..." : firstPrompt;
                         
                         // Generate ID if needed
                         if (currentSessionId == null) {
@@ -473,6 +480,77 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         
         if (drawerLayout != null) {
             drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+    
+    private void setupSettingsButton() {
+        try {
+            if (buttonSettings != null) {
+                buttonSettings.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AnimationUtils.bounce(v);
+                        showSettingsMenu(v);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void showSettingsMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.settings_menu, popup.getMenu());
+        
+        // Update theme menu item text based on current theme
+        MenuItem themeItem = popup.getMenu().findItem(R.id.menu_theme);
+        if (themeItem != null) {
+            themeItem.setTitle(isDarkTheme ? "Theme: Dark" : "Theme: Light");
+        }
+        
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.menu_theme) {
+                    toggleTheme();
+                    return true;
+                } else if (id == R.id.menu_logout) {
+                    logout();
+                    return true;
+                }
+                return false;
+            }
+        });
+        popup.show();
+    }
+    
+    private void loadTheme() {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        isDarkTheme = prefs.getBoolean("isDarkTheme", true); // Default to dark
+        applyTheme();
+    }
+    
+    private void toggleTheme() {
+        isDarkTheme = !isDarkTheme;
+        
+        // Save preference
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        prefs.edit().putBoolean("isDarkTheme", isDarkTheme).apply();
+        
+        // Apply new theme
+        applyTheme();
+        
+        // Recreate activity to apply theme
+        recreate();
+    }
+    
+    private void applyTheme() {
+        if (isDarkTheme) {
+            setTheme(R.style.Theme_UoSBot_Dark);
+        } else {
+            setTheme(R.style.Theme_UoSBot_Light);
         }
     }
 

@@ -251,6 +251,36 @@ def translate_text(text: str, target_lang: str) -> str:
         print(f"Translation error: {e}")
         return text
 
+def find_matching_faq(question: str) -> Optional[dict]:
+    """Find matching FAQ using simple similarity check"""
+    question_lower = question.lower().strip()
+    
+    # Direct match check
+    for faq in faqs_list:
+        faq_question = faq.get('question', '').lower().strip()
+        
+        # Check for exact or very similar match
+        if faq_question in question_lower or question_lower in faq_question:
+            return faq
+        
+        # Check for keyword overlap
+        question_words = set(question_lower.split())
+        faq_words = set(faq_question.split())
+        
+        # Remove common words
+        common_words = {'what', 'is', 'the', 'are', 'how', 'can', 'do', 'does', 'when', 'where', 'who', 'at', 'in', 'for', 'a', 'an', 'to', 'of', 'and', 'or'}
+        question_words -= common_words
+        faq_words -= common_words
+        
+        # If significant overlap (more than 60% of unique words match)
+        if len(question_words) > 0 and len(faq_words) > 0:
+            overlap = len(question_words & faq_words)
+            similarity = overlap / min(len(question_words), len(faq_words))
+            if similarity > 0.6:
+                return faq
+    
+    return None
+
 def get_uos_answer(question: str, user_language: str) -> dict:
     """Get answer from OpenAI with UoS context restriction"""
     
@@ -263,24 +293,41 @@ def get_uos_answer(question: str, user_language: str) -> dict:
             "error": "Missing API Key"
         }
 
+    # First, try to find a matching FAQ
+    matching_faq = find_matching_faq(question)
+    if matching_faq:
+        answer = matching_faq.get('answer')
+        # Translate if needed
+        if user_language != "en":
+            answer = translate_text(answer, user_language)
+        
+        return {
+            "answer": answer,
+            "source": "University of Sindh Official FAQ",
+            "language": user_language,
+            "success": True
+        }
+
     # System prompt that provides helpful answers about UoS
     system_prompt = f"""You are a helpful and knowledgeable assistant for University of Sindh (UoS). Your role is to provide accurate, helpful information about the University of Sindh including admissions, fees, programs, facilities, and general university information.
 
 KNOWLEDGE BASE ABOUT UNIVERSITY OF SINDH:
 {UOS_KNOWLEDGE_BASE}
 
-INSTRUCTIONS:
-1. Answer questions about University of Sindh using the knowledge base provided above
-2. Be helpful, friendly, and provide detailed answers when possible
-3. If the question is about UoS but specific information is not in the knowledge base, provide a general helpful answer based on common university practices, but mention that for specific details, they should contact the university
-4. If the question is completely unrelated to University of Sindh, politely redirect to UoS-related topics
-5. Always be accurate and honest - if you don't know something specific, say so
-6. Include relevant contact information (email, website, phone) when helpful
-7. Format your answers clearly with proper structure
-8. For fee-related questions, mention that fees may vary and are subject to change
-9. For admission questions, mention that requirements may vary by program
+CRITICAL INSTRUCTIONS:
+1. The FAQ section above contains OFFICIAL answers. If a user's question matches any FAQ question, you MUST use that exact answer
+2. Answer questions about University of Sindh using the knowledge base provided above
+3. Be helpful, friendly, and provide detailed answers when possible
+4. If the question is about UoS but specific information is not in the knowledge base, provide a general helpful answer based on common university practices, but mention that for specific details, they should contact the university
+5. If the question is completely unrelated to University of Sindh, politely redirect to UoS-related topics
+6. Always be accurate and honest - if you don't know something specific, say so
+7. Include relevant contact information (email, website, phone) when helpful
+8. Format your answers clearly with proper structure
+9. For fee-related questions, mention that fees may vary and are subject to change
+10. For admission questions, mention that requirements may vary by program
 
 IMPORTANT: 
+- Check the FAQ section first before generating any answer
 - Provide actual helpful answers, not just "visit the website"
 - Use the knowledge base to give specific information
 - Be conversational and helpful
@@ -333,6 +380,14 @@ IMPORTANT:
 @app.get("/")
 def read_root():
     return {"message": "UoS Sindh Bot API is running", "status": "active"}
+
+@app.get("/api/faqs")
+def get_faqs():
+    """Get all loaded FAQs for testing"""
+    return {
+        "total_faqs": len(faqs_list),
+        "faqs": faqs_list
+    }
 
 # Authentication Endpoints
 @app.post("/api/auth/signup", response_model=AuthResponse)

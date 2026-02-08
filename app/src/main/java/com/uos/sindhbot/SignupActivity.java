@@ -35,6 +35,9 @@ public class SignupActivity extends AppCompatActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Load and apply theme
+        loadTheme();
+        
         super.onCreate(savedInstanceState);
         try {
             setContentView(R.layout.activity_signup);
@@ -46,6 +49,16 @@ public class SignupActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "Error initializing: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    private void loadTheme() {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        boolean isDarkTheme = prefs.getBoolean("isDarkTheme", true); // Default to dark
+        if (isDarkTheme) {
+            setTheme(R.style.Theme_UoSBot_Dark);
+        } else {
+            setTheme(R.style.Theme_UoSBot_Light);
         }
     }
     

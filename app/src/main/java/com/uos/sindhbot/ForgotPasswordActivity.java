@@ -1,6 +1,7 @@
 package com.uos.sindhbot;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -33,6 +34,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Load and apply theme
+        loadTheme();
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
         
@@ -40,6 +44,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         setupApiService();
         setupClickListeners();
         animateViews();
+    }
+    
+    private void loadTheme() {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        boolean isDarkTheme = prefs.getBoolean("isDarkTheme", true); // Default to dark
+        if (isDarkTheme) {
+            setTheme(R.style.Theme_UoSBot_Dark);
+        } else {
+            setTheme(R.style.Theme_UoSBot_Light);
+        }
     }
     
     private void setupApiService() {
