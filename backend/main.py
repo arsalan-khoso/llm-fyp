@@ -13,6 +13,11 @@ from datetime import datetime, timedelta
 import jwt
 from dotenv import load_dotenv
 from pathlib import Path
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 # For production (Render), env vars are set in the dashboard, so we don't strictly need .env
@@ -52,15 +57,16 @@ app.add_middleware(
 
 # OpenAI API Key
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    # We print a warning instead of raising error immediately to allow app to start
-    # but actual AI features will fail.
-    print("WARNING: OPENAI_API_KEY not found! Set it in environment variables.")
-
 client = None
 if OPENAI_API_KEY:
-    client = OpenAI(api_key=OPENAI_API_KEY)
-    print("✅ OpenAI API client initialized successfully")
+    try:
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        logger.info("✅ OpenAI API client initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize OpenAI client: {e}")
+        client = None
+else:
+    logger.warning("WARNING: OPENAI_API_KEY not found! Set it in environment variables.")
 
 # ... rest of the code ...
 # For brevity, I am not rewriting the entire content, 
@@ -322,7 +328,8 @@ def translate_text(text: str, target_lang: str) -> str:
         return text
     
     if not client:
-        return text # Fallback if no client
+        logger.warning("OpenAI client not available for translation")
+        return text  # Fallback if no client
 
     try:
         response = client.chat.completions.create(
@@ -334,9 +341,11 @@ def translate_text(text: str, target_lang: str) -> str:
             max_tokens=500,
             temperature=0.3
         )
-        return response.choices[0].message.content.strip()
+        translated = response.choices[0].message.content.strip()
+        logger.info(f"Translated text to {target_lang}")
+        return translated
     except Exception as e:
-        print(f"Translation error: {e}")
+        logger.error(f"Translation error: {e}")
         return text
 
 def find_matching_faq(question: str) -> Optional[dict]:
@@ -379,31 +388,34 @@ def get_uos_answer(question: str, user_language: str) -> dict:
     """Get answer from OpenAI with UoS context restriction"""
     
     if not client:
+        logger.error("OpenAI client not available")
         return {
-            "answer": "OpenAI API Key is missing. Please configure the backend environment.",
+            "answer": "Sorry, the AI service is currently unavailable. Please try again later.",
             "source": None,
             "language": user_language,
             "success": False,
-            "error": "Missing API Key"
+            "error": "AI service unavailable"
         }
 
-    # First, try to find a matching FAQ
-    matching_faq = find_matching_faq(question)
-    if matching_faq:
-        answer = matching_faq.get('answer')
-        # Translate if needed
-        if user_language != "en":
-            answer = translate_text(answer, user_language)
-        
-        return {
-            "answer": answer,
-            "source": None,
-            "language": user_language,
-            "success": True
-        }
+    try:
+        # First, try to find a matching FAQ
+        matching_faq = find_matching_faq(question)
+        if matching_faq:
+            answer = matching_faq.get('answer')
+            # Translate if needed
+            if user_language != "en":
+                answer = translate_text(answer, user_language)
+            
+            logger.info(f"Answered from FAQ: {question[:50]}...")
+            return {
+                "answer": answer,
+                "source": "FAQ",
+                "language": user_language,
+                "success": True
+            }
 
-    # System prompt that provides helpful answers about UoS
-    system_prompt = f"""You are a helpful and knowledgeable assistant for University of Sindh (UoS). Your role is to provide accurate, helpful information about the University of Sindh including admissions, fees, programs, facilities, and general university information.
+        # System prompt that provides helpful answers about UoS
+        system_prompt = f"""You are a helpful and knowledgeable assistant for University of Sindh (UoS). Your role is to provide accurate, helpful information about the University of Sindh including admissions, fees, programs, facilities, and general university information.
 
 KNOWLEDGE BASE ABOUT UNIVERSITY OF SINDH:
 {UOS_KNOWLEDGE_BASE}
@@ -426,8 +438,7 @@ IMPORTANT:
 - Use the knowledge base to give specific information
 - Be conversational and helpful
 - Only suggest visiting the website if the question requires very specific or up-to-date information not in the knowledge base"""
-    
-    try:
+        
         # Translate question to English if needed
         question_english = question
         if user_language != "en":
@@ -455,6 +466,7 @@ IMPORTANT:
         # Extract source if mentioned
         source = "www.usindh.edu.pk" if "usindh" in answer.lower() else None
         
+        logger.info(f"Generated AI answer for: {question[:50]}...")
         return {
             "answer": answer,
             "source": source,
@@ -463,12 +475,13 @@ IMPORTANT:
         }
         
     except Exception as e:
+        logger.error(f"Error generating answer: {e}")
         return {
-            "answer": "",
+            "answer": "Sorry, I encountered an error while processing your question. Please try again.",
             "source": None,
             "language": user_language,
             "success": False,
-            "error": str(e)
+            "error": "Internal processing error"
         }
 
 @app.get("/")
@@ -488,8 +501,16 @@ def get_faqs():
 def signup(request: SignupRequest):
     """User registration"""
     try:
+        # Validate input
+        if not request.full_name.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Full name is required"
+            )
+        
         # Check if user already exists
         if request.email in users_db:
+            logger.warning(f"Signup attempt with existing email: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already registered"
@@ -518,6 +539,7 @@ def signup(request: SignupRequest):
         token = create_token(user_id, request.email)
         tokens_db[token] = {"user_id": user_id, "email": request.email}
         
+        logger.info(f"New user registered: {request.email}")
         return AuthResponse(
             success=True,
             message="Account created successfully",
@@ -531,17 +553,26 @@ def signup(request: SignupRequest):
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Signup error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            detail="An error occurred during registration. Please try again."
         )
 
 @app.post("/api/auth/login", response_model=AuthResponse)
 def login(request: LoginRequest):
     """User login"""
     try:
+        # Validate input
+        if not request.email.strip() or not request.password.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email and password are required"
+            )
+        
         # Check if user exists
         if request.email not in users_db:
+            logger.warning(f"Login attempt with non-existent email: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid email or password"
@@ -551,6 +582,7 @@ def login(request: LoginRequest):
         
         # Verify password
         if not verify_password(request.password, user["password"]):
+            logger.warning(f"Invalid password for email: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid email or password"
@@ -560,6 +592,7 @@ def login(request: LoginRequest):
         token = create_token(user["user_id"], request.email)
         tokens_db[token] = {"user_id": user["user_id"], "email": request.email}
         
+        logger.info(f"User logged in: {request.email}")
         return AuthResponse(
             success=True,
             message="Login successful",
@@ -573,18 +606,27 @@ def login(request: LoginRequest):
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Login error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            detail="An error occurred during login. Please try again."
         )
 
 @app.post("/api/auth/forgot-password", response_model=AuthResponse)
 def forgot_password(request: ForgotPasswordRequest):
     """Request password reset"""
     try:
-        # Check if user exists
+        # Validate input
+        if not request.email.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email is required"
+            )
+        
+        # Check if user exists (don't reveal existence for security)
         if request.email not in users_db:
-            # Don't reveal if email exists for security
+            logger.info(f"Password reset requested for non-existent email: {request.email}")
+            # Return success to prevent email enumeration
             return AuthResponse(
                 success=True,
                 message="If the email exists, a reset link has been sent"
@@ -592,27 +634,40 @@ def forgot_password(request: ForgotPasswordRequest):
         
         # Generate reset token (in production, send via email)
         reset_token = secrets.token_urlsafe(32)
-        # Store reset token (in production, store in database with expiration)
+        # In production, store reset token in database with expiration
+        # For demo, we'll just log it
+        logger.info(f"Password reset token for {request.email}: {reset_token}")
         
         return AuthResponse(
             success=True,
-            message=f"Reset token generated: {reset_token} (In production, this would be sent via email)"
+            message="If the email exists, a reset link has been sent (check logs for demo token)"
         )
+    except HTTPException:
+        raise
     except Exception as e:
+        logger.error(f"Forgot password error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            detail="An error occurred. Please try again."
         )
 
 @app.post("/api/auth/reset-password", response_model=AuthResponse)
 def reset_password(request: ResetPasswordRequest):
     """Reset password with token"""
     try:
+        # Validate input
+        if not request.email.strip() or not request.reset_token.strip() or not request.new_password.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="All fields are required"
+            )
+        
         # Check if user exists
         if request.email not in users_db:
+            logger.warning(f"Password reset attempt for non-existent email: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
+                detail="Invalid reset request"
             )
         
         # Validate password
@@ -622,13 +677,14 @@ def reset_password(request: ResetPasswordRequest):
                 detail="Password must be at least 6 characters"
             )
         
-        # In production, verify reset token from database
-        # For now, accept any token if email matches
+        # In production, verify reset token from database with expiration
+        # For now, accept any token if email matches (demo only)
         
         # Update password
         user = users_db[request.email]
         user["password"] = hash_password(request.new_password)
         
+        logger.info(f"Password reset successful for: {request.email}")
         return AuthResponse(
             success=True,
             message="Password reset successfully"
@@ -636,33 +692,65 @@ def reset_password(request: ResetPasswordRequest):
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Reset password error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            detail="An error occurred during password reset. Please try again."
         )
 
 @app.get("/api/auth/verify")
 def verify_auth(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Verify authentication token"""
-    token = credentials.credentials
-    payload = verify_token(token)
-    
-    if not payload:
+    try:
+        token = credentials.credentials
+        if not token:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token is required"
+            )
+        
+        payload = verify_token(token)
+        
+        if not payload:
+            logger.warning("Invalid or expired token used")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired token"
+            )
+        
+        return {"success": True, "user_id": payload["user_id"], "email": payload["email"]}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Token verification error: {e}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication verification failed"
         )
-    
-    return {"success": True, "user_id": payload["user_id"], "email": payload["email"]}
 
 @app.post("/api/ask", response_model=QuestionResponse)
 def ask_question(request: QuestionRequest):
     """Handle question from Android app"""
     try:
+        # Validate input
+        if not request.question.strip():
+            return QuestionResponse(
+                answer="Please provide a question.",
+                language=request.language,
+                success=False,
+                error="Empty question"
+            )
+        
         result = get_uos_answer(request.question, request.language)
         return QuestionResponse(**result)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Ask question error: {e}")
+        return QuestionResponse(
+            answer="Sorry, an error occurred while processing your request. Please try again.",
+            language=request.language,
+            success=False,
+            error="Internal server error"
+        )
 
 if __name__ == "__main__":
     import uvicorn
